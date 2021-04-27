@@ -76,11 +76,19 @@ export default {
     }]
   ],
   modules: [
+    '@nuxtjs/apollo',
     'nuxt-i18n',
     'cookie-universal-nuxt',
     'vue-scrollto/nuxt',
     '@vue-storefront/middleware/nuxt'
   ],
+  apollo: {
+    clientConfigs: {
+      default: {
+        httpEndpoint: 'https://demo.prod.shopsys.cloud/graphql/',
+      }
+    }
+  },
   i18n: {
     currency: 'USD',
     country: 'US',

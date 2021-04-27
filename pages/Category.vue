@@ -159,22 +159,20 @@
           >
             <SfProductCard
               data-cy="category-product-card"
-              v-for="(product, i) in products"
-              :key="productGetters.getSlug(product)"
+              v-for="(product, i) in products.edges"
+              :key="product.node.uuid"
               :style="{ '--index': i }"
-              :title="productGetters.getName(product)"
-              :image="productGetters.getCoverImage(product)"
-              :regular-price="$n(productGetters.getPrice(product).regular, 'currency')"
-              :special-price="productGetters.getPrice(product).special && $n(productGetters.getPrice(product).special, 'currency')"
+              :title="product.node.name"
+              :image="product.node.name"
+              :regular-price="product.node.price.priceWithoutVat"
+              :special-price="product.node.price.priceWithVat"
               :max-rating="5"
-              :score-rating="productGetters.getAverageRating(product)"
+              :score-rating="3"
               :show-add-to-cart-button="true"
               :isOnWishlist="false"
               :isAddedToCart="isInCart({ product })"
-              :link="localePath(`/p/${productGetters.getId(product)}/${productGetters.getSlug(product)}`)"
+              :link="`/p/${product.node.uuid}/${product.node.name}`"
               class="products__product-card"
-              @click:wishlist="addItemToWishlist({ product })"
-              @click:add-to-cart="addItemToCart({ product, quantity: 1 })"
             />
           </transition-group>
           <transition-group
@@ -366,10 +364,39 @@ import { useUiHelpers, useUiState } from '~/composables';
 import { onSSR } from '@vue-storefront/core';
 import LazyHydrate from 'vue-lazy-hydration';
 import Vue from 'vue';
+import gql from 'graphql-tag';
 
 // TODO(addToCart qty, horizontal): https://github.com/vuestorefront/storefront-ui/issues/1606
 export default {
   transition: 'fade',
+  apollo: {
+    products: {
+      query: gql`
+        query getFirstProducts($first: Int = 10){
+          products (first: $first) {
+              edges {
+                  node {
+                      uuid
+                      link
+                      name
+                      shortDescription
+                      stockQuantity
+                      price {
+                          priceWithVat
+                          priceWithoutVat
+                          vatAmount
+                      }
+                      images {
+                          type
+                          url
+                      }
+                  }
+              }
+          }
+        }
+      `
+    }
+  },
   setup(props, context) {
     const th = useUiHelpers();
     const uiState = useUiState();
@@ -377,7 +404,6 @@ export default {
     const { addItem: addItemToWishlist } = useWishlist();
     const { result, search, loading } = useFacet();
 
-    const products = computed(() => facetGetters.getProducts(result.value));
     const categoryTree = computed(() => facetGetters.getCategoryTree(result.value));
     const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result.value));
     const sortBy = computed(() => facetGetters.getSortOptions(result.value));
@@ -443,7 +469,6 @@ export default {
     return {
       ...uiState,
       th,
-      products,
       categoryTree,
       loading,
       productGetters,
