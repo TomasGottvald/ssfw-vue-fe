@@ -1,6 +1,6 @@
-# theme
+# VueStoreFront for SSFW FE API
 
-> My breathtaking Nuxt.js project
+> Adaptation of SSFW FE API to VueStoreFront
 
 ## Build Setup
 
