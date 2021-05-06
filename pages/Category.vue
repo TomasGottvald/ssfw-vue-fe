@@ -162,8 +162,8 @@
               v-for="(product, i) in products.edges"
               :key="product.node.uuid"
               :style="{ '--index': i }"
-              :title="product.node.name"
-              :image="product.node.name"
+              :title="SsfwGetProductName(product)"
+              :image="SsfwGetProductImage(product)"
               :regular-price="product.node.price.priceWithoutVat"
               :special-price="product.node.price.priceWithVat"
               :max-rating="5"
@@ -171,8 +171,8 @@
               :show-add-to-cart-button="true"
               :isOnWishlist="false"
               :isAddedToCart="isInCart({ product })"
-              :link="`/p/${product.node.uuid}/${product.node.name}`"
-              class="products__product-card"
+              :link="SsfwGetProductUrl(product)"
+              class="products__productcard"
             />
           </transition-group>
           <transition-group
@@ -185,20 +185,18 @@
             <SfProductCardHorizontal
               data-cy="category-product-cart_wishlist"
               v-for="(product, i) in products"
-              :key="productGetters.getSlug(product)"
+              :key="product.node.uuid"
               :style="{ '--index': i }"
-              :title="productGetters.getName(product)"
-              :description="productGetters.getDescription(product)"
+              :title="SsfwGetProductName(product)"
+              :description="product.node.shortDescription"
               :image="productGetters.getCoverImage(product)"
-              :regular-price="$n(productGetters.getPrice(product).regular, 'currency')"
-              :special-price="productGetters.getPrice(product).special && $n(productGetters.getPrice(product).special, 'currency')"
+              :regular-price="product.node.price.priceWithVat"
+              :special-price="product.node.price.priceWithoutVat"
               :max-rating="5"
               :score-rating="3"
               :is-on-wishlist="false"
               class="products__product-card-horizontal"
-              @click:wishlist="addItemToWishlist({ product })"
-              @click:add-to-cart="addItemToCart({ product, quantity: 1 })"
-              :link="localePath(`/p/${productGetters.getId(product)}/${productGetters.getSlug(product)}`)"
+              :link="localePath(`/p/${product.node.uuid}/${product.node.link}`)"
             >
               <template #configuration>
                 <SfProperty
@@ -240,7 +238,7 @@
             <span class="products__show-on-page__label">{{ $t('Show on page') }}</span>
             <LazyHydrate on-interaction>
               <SfSelect
-                :value="pagination.itemsPerPage.toString()"
+                :value="'10'"
                 class="products__items-per-page"
                 @input="th.changeItemsPerPage"
               >
@@ -365,10 +363,12 @@ import { onSSR } from '@vue-storefront/core';
 import LazyHydrate from 'vue-lazy-hydration';
 import Vue from 'vue';
 import gql from 'graphql-tag';
+import SsfwProductFunctions from '/ssfw-api/product';
 
 // TODO(addToCart qty, horizontal): https://github.com/vuestorefront/storefront-ui/issues/1606
 export default {
   transition: 'fade',
+  mixins: [SsfwProductFunctions],
   apollo: {
     products: {
       query: gql`
@@ -387,8 +387,7 @@ export default {
                           vatAmount
                       }
                       images {
-                          type
-                          url
+                        url
                       }
                   }
               }

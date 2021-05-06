@@ -12,7 +12,7 @@
       <div class="product__info">
         <div class="product__header">
           <SfHeading
-            :title="productGetters.getName(product)"
+            :title="product.name"
             :level="3"
             class="sf-heading--no-underline sf-heading--left"
           />
@@ -25,8 +25,8 @@
         </div>
         <div class="product__price-and-rating">
           <SfPrice
-            :regular="$n(productGetters.getPrice(product).regular, 'currency')"
-            :special="productGetters.getPrice(product).special && $n(productGetters.getPrice(product).special, 'currency')"
+            :regular="product.price.priceWithoutVat"
+            :special="product.price.priceWithVat"
           />
           <div>
             <div class="product__rating">
@@ -43,7 +43,7 @@
         </div>
         <div>
           <p class="product__description desktop-only">
-            {{ description }}
+            {{ product.shortDescription }}
           </p>
           <SfButton data-cy="product-btn_size-guide" class="sf-button--text desktop-only product__guide">
             {{ $t('Size guide') }}
@@ -91,7 +91,7 @@
           <SfTabs :open-tab="1" class="product__tabs">
             <SfTab data-cy="product-tab_description" title="Description">
               <div class="product__description">
-                  {{ $t('Product description') }}
+                  {{ product.description }}
               </div>
               <SfProperty
                 v-for="(property, i) in properties"
@@ -191,10 +191,77 @@ import { useProduct, useCart, productGetters, useReview, reviewGetters } from '@
 import { onSSR } from '@vue-storefront/core';
 import MobileStoreBanner from '~/components/MobileStoreBanner.vue';
 import LazyHydrate from 'vue-lazy-hydration';
+import gql from 'graphql-tag';
 
 export default {
   name: 'Product',
   transition: 'fade',
+  apollo: {
+    product: {
+      query: gql`
+        query getProductsDetail($uuid: Uuid){ 
+          product (uuid: $uuid) {
+              uuid,
+              name
+              shortDescription
+              seoH1
+              seoTitle
+              seoMetaDescription
+              link
+              unit {
+                  name
+              }
+              availability {
+                  name
+              }
+              stockQuantity
+              categories {
+                  name
+              }
+              flags {
+                  name
+                  rgbColor
+              }
+              price {
+                  priceWithVat
+                  priceWithoutVat
+                  vatAmount
+              }
+              images {
+                  type
+                  position
+                  size
+                  url
+                  width
+                  height
+              }
+              brand {
+                  name
+              }
+              accessories {
+                  name
+              }
+              isSellingDenied
+              description
+              orderingPriority
+              parameters {
+                  uuid
+                  name
+                  values {
+                      uuid
+                      text
+                  }
+              }
+          }
+        }
+      `,
+      variables () {
+        return {
+          uuid: this.$route.params.id
+        }
+      }
+    }
+  },
   setup(props, context) {
     const qty = ref(1);
     const { id } = context.root.$route.params;
@@ -296,7 +363,6 @@ export default {
           value: 'Germany'
         }
       ],
-      description: 'Find stunning women cocktail and party dresses. Stand out in lace and metallic cocktail dresses and party dresses from all your favorite brands.',
       detailsIsActive: false,
       brand:
           'Brand name is the perfect pairing of quality and design. This label creates major everyday vibes with its collection of modern brooches, silver and gold jewellery, or clips it back with hair accessories in geo styles.',
