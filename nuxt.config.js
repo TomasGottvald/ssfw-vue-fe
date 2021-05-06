@@ -85,7 +85,7 @@ export default {
   apollo: {
     clientConfigs: {
       default: {
-        httpEndpoint: 'https://demo.prod.shopsys.cloud/graphql/',
+        httpEndpoint: 'https://demo.shopsys.com/graphql/',
       }
     }
   },
