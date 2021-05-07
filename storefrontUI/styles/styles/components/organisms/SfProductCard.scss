@@ -75,7 +75,7 @@
     left: var(--product-card-badge-left, 0);
   }
   &__badge {
-    position: static;
+    position: static !important;
     margin-left: 5px;
   }
   &__add-button {
