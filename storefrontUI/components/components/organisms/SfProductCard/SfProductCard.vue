@@ -27,13 +27,17 @@
           />
         </SfLink>
       </slot>
-      <slot name="badge" v-bind="{ badgeLabel, badgeColor }">
-        <SfBadge
-          v-if="badgeLabel"
-          class="sf-product-card__badge"
-          :class="badgeColorClass"
-          >{{ badgeLabel }}</SfBadge
-        >
+      <slot name="badge" v-bind="{ badgeLabel }">
+        <div class="sf-product-card__badges">
+          <SfBadge
+            v-for="(flag, i) in badgeLabel"
+            :key="i"
+            class="sf-product-card__badge"
+            :style="{backgroundColor: flag.rgbColor}"
+            >
+              {{ flag.name }}
+            </SfBadge>
+          </div>
       </slot>
       <SfButton
         v-if="wishlistIcon !== false"
@@ -102,6 +106,9 @@
           {{ title }}
         </h3>
       </SfLink>
+    </slot>
+    <slot name="quantity" v-bind="{ quantity, unit }">
+      <div v-if="quantity">{{ quantity }} {{ unit }}</div>
     </slot>
     <slot name="price" v-bind="{ specialPrice, regularPrice }">
       <SfPrice
@@ -182,7 +189,7 @@ export default {
      * Badge label
      */
     badgeLabel: {
-      type: String,
+      type: Array,
       default: "",
     },
     /**
@@ -199,6 +206,20 @@ export default {
      */
     title: {
       type: String,
+      default: "",
+    },
+    /**
+     * Product unit
+     */
+    unit: {
+      type: String,
+      default: "",
+    },
+    /**
+     * Product quantity
+     */
+    quantity: {
+      type: Number,
       default: "",
     },
     /**

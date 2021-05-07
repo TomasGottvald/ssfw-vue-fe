@@ -69,10 +69,14 @@
       --image-height: auto;
     }
   }
-  &__badge {
+  &__badges {
     position: absolute;
     top: var(--product-card-badge-top, var(--spacer-xs));
     left: var(--product-card-badge-left, 0);
+  }
+  &__badge {
+    position: static;
+    margin-left: 5px;
   }
   &__add-button {
     --circle-icon-position: absolute;

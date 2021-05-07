@@ -164,6 +164,7 @@
               :style="{ '--index': i }"
               :title="SsfwGetProductName(product)"
               :image="SsfwGetProductImage(product)"
+              :badgeLabel="product.node.flags"
               :regular-price="product.node.price.priceWithoutVat"
               :special-price="product.node.price.priceWithVat"
               :max-rating="5"
@@ -172,8 +173,18 @@
               :isOnWishlist="false"
               :isAddedToCart="isInCart({ product })"
               :link="SsfwGetProductUrl(product)"
+              :quantity="product.node.stockQuantity"
+              :unit="product.node.unit.name"
               class="products__productcard"
-            />
+            >
+              <template #title={title,link}>
+                <SfLink :link="link" class="sf-product-card__link">
+                  <h2 class="sf-product-card__title">
+                    {{ title }}
+                  </h2>
+                </SfLink>
+              </template>
+            </SfProductCard>
           </transition-group>
           <transition-group
             v-else
@@ -346,7 +357,6 @@ import {
   SfHeading,
   SfMenuItem,
   SfFilter,
-  SfProductCard,
   SfProductCardHorizontal,
   SfPagination,
   SfAccordion,
@@ -354,8 +364,10 @@ import {
   SfBreadcrumbs,
   SfLoader,
   SfColor,
-  SfProperty
+  SfProperty,
+  SfLink
 } from '@storefront-ui/vue';
+import SfProductCard from '/storefrontUI/components/components/organisms/SfProductCard/SfProductCard';
 import { ref, computed, onMounted } from '@vue/composition-api';
 import { useCart, useWishlist, productGetters, useFacet, facetGetters } from '@vue-storefront/commercetools';
 import { useUiHelpers, useUiState } from '~/composables';
@@ -380,11 +392,18 @@ export default {
                       link
                       name
                       shortDescription
+                      unit {
+                        name
+                      }
                       stockQuantity
                       price {
                           priceWithVat
                           priceWithoutVat
                           vatAmount
+                      }
+                      flags {
+                        name
+                        rgbColor
                       }
                       images {
                         url
@@ -504,7 +523,8 @@ export default {
     SfColor,
     SfHeading,
     SfProperty,
-    LazyHydrate
+    LazyHydrate,
+    SfLink
   }
 };
 </script>
