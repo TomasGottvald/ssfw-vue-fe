@@ -122,7 +122,7 @@ export default {
       );
     },
     classes() {
-      return `sf-image ${this.loaded && "sf-image-loaded"}`;
+      return `sf-image sf-image--product ${this.loaded && "sf-image-loaded"}`;
     },
     variables() {
       const width =

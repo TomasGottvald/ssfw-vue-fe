@@ -25,10 +25,10 @@ export default {
             }
         },
         SsfwGetProductAltFromUrlImages(url) {
-            const productAlt = url.split('/').join(',').split('.').join(',').split(',');
-            const lastArray = productAlt[productAlt.length - 2];
+            const productUrl = url.split('/').join(',').split('.').join(',').split(',');
+            const productAlt = productUrl[productUrl.length - 2];
 
-            return lastArray;
+            return productAlt;
         }
     }
   }
