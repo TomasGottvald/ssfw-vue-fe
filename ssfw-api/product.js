@@ -23,6 +23,12 @@ export default {
             } else {
                 return config.SsfwNoImageUrl;
             }
+        },
+        SsfwGetProductAltFromUrlImages(url) {
+            const productAlt = url.split('/').join(',').split('.').join(',').split(',');
+            const lastArray = productAlt[productAlt.length - 2];
+
+            return lastArray;
         }
     }
   }

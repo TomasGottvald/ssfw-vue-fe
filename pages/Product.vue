@@ -6,7 +6,7 @@
     />
     <div class="product">
       <LazyHydrate when-idle>
-        <SfGallery :images="productGallery" class="product__gallery" />
+        <SfGallery :images="product.images" class="product__gallery" />
       </LazyHydrate>
 
       <div class="product__info">
@@ -172,7 +172,6 @@ import {
   SfSelect,
   SfAddToCart,
   SfTabs,
-  SfGallery,
   SfIcon,
   SfImage,
   SfBanner,
@@ -183,7 +182,7 @@ import {
   SfButton,
   SfColor
 } from '@storefront-ui/vue';
-
+import SfGallery from '/storefrontUI/components/components/molecules/SfGallery/SfGallery';
 import InstagramFeed from '~/components/InstagramFeed.vue';
 import RelatedProducts from '~/components/RelatedProducts.vue';
 import { ref, computed } from '@vue/composition-api';

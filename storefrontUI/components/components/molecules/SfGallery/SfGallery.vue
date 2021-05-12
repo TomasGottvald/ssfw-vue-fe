@@ -5,7 +5,7 @@
         <div class="glide__track" data-glide-el="track">
           <ul class="glide__slides">
             <li
-              v-for="(picture, index) in images"
+              v-for="(picture, index) in imagesOfProduct"
               :key="'slide-' + index"
               class="glide__slide"
               @mouseover="startZoom(picture)"
@@ -16,8 +16,8 @@
                 ref="sfGalleryBigImage"
                 class="sf-gallery__big-image"
                 :class="{ 'sf-gallery__big-image--has-zoom': enableZoom }"
-                :src="picture.desktop.url"
-                :alt="picture.alt"
+                :src="picture.url"
+                :alt="SsfwGetProductAltFromUrlImages(picture.url)"
                 :width="imageWidth"
                 :height="imageHeight"
                 @click="$emit('click:stage', { picture, index })"
@@ -44,9 +44,9 @@
       </transition>
     </div>
     <div class="sf-gallery__thumbs">
-      <slot name="thumbs" v-bind="{ images, active: activeIndex, go }">
+      <slot name="thumbs" v-bind="{ imagesOfProduct, active: activeIndex, go }">
         <SfButton
-          v-for="(image, index) in images"
+          v-for="(image, index) in imagesOfProduct"
           :key="'img-' + index"
           class="sf-button--pure sf-gallery__item"
           :class="{ 'sf-gallery__item--selected': index === activeIndex }"
@@ -54,8 +54,8 @@
         >
           <SfImage
             class="sf-gallery__thumb"
-            :src="image.mobile.url"
-            :alt="image.alt"
+            :src="image.url"
+            :alt="SsfwGetProductAltFromUrlImages(image.url)"
             :width="thumbWidth"
             :height="thumbHeight"
           />
@@ -68,8 +68,11 @@
 import Glide from "@glidejs/glide";
 import SfImage from "../../atoms/SfImage/SfImage.vue";
 import SfButton from "../../atoms/SfButton/SfButton.vue";
+import SsfwProductFunctions from '/ssfw-api/product';
+
 export default {
   name: "SfGallery",
+  mixins: [SsfwProductFunctions],
   components: {
     SfImage,
     SfButton,
@@ -154,6 +157,7 @@ export default {
       glide: null,
       activeIndex: this.current - 1,
       style: "",
+      imagesOfProduct: this.images,
     };
   },
   computed: {
@@ -185,6 +189,10 @@ export default {
     if (this.glide) {
       this.glide.destroy();
     }
+  },
+  beforeMount(){
+    const filteredImages = this.imagesOfProduct.filter(image => image.size == 'default')
+    this.imagesOfProduct = filteredImages;
   },
   methods: {
     positionObject(index) {
