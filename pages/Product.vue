@@ -158,6 +158,7 @@
 </template>
 <script>
 import {
+  SfProperty,
   SfHeading,
   SfPrice,
   SfRating,
@@ -175,7 +176,6 @@ import {
   SfColor
 } from '@storefront-ui/vue';
 import SfGallery from '/storefrontUI/components/components/molecules/SfGallery/SfGallery';
-import SfProperty from '/storefrontUI/components/components/atoms/SfProperty/SfProperty';
 import InstagramFeed from '~/components/InstagramFeed.vue';
 import RelatedProducts from '~/components/RelatedProducts.vue';
 import { ref, computed } from '@vue/composition-api';
@@ -340,24 +340,6 @@ export default {
     return {
       product: [],
       stock: 5,
-      properties: [
-        {
-          name: 'Product Code',
-          value: '578902-00'
-        },
-        {
-          name: 'Category',
-          value: 'Pants'
-        },
-        {
-          name: 'Material',
-          value: 'Cotton'
-        },
-        {
-          name: 'Country',
-          value: 'Germany'
-        }
-      ],
       detailsIsActive: false,
       brand:
           'Brand name is the perfect pairing of quality and design. This label creates major everyday vibes with its collection of modern brooches, silver and gold jewellery, or clips it back with hair accessories in geo styles.',
