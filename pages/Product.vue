@@ -94,18 +94,12 @@
                   {{ product.description }}
               </div>
               <SfProperty
-                v-for="(property, i) in properties"
+                v-for="(property, i) in SsfwProductParameters(product.categories, product.brand, product.parameters)"
                 :key="i"
                 :name="property.name"
                 :value="property.value"
                 class="product__property"
-              >
-                <template v-if="property.name === 'Category'" #value>
-                  <SfButton class="product__property__button sf-button--text">
-                    {{ property.value }}
-                  </SfButton>
-                </template>
-              </SfProperty>
+              />
             </SfTab>
             <SfTab title="Read reviews" data-cy="product-tab_reviews">
               <SfReview
@@ -165,7 +159,6 @@
 </template>
 <script>
 import {
-  SfProperty,
   SfHeading,
   SfPrice,
   SfRating,
@@ -183,6 +176,7 @@ import {
   SfColor
 } from '@storefront-ui/vue';
 import SfGallery from '/storefrontUI/components/components/molecules/SfGallery/SfGallery';
+import SfProperty from '/storefrontUI/components/components/atoms/SfProperty/SfProperty';
 import InstagramFeed from '~/components/InstagramFeed.vue';
 import RelatedProducts from '~/components/RelatedProducts.vue';
 import { ref, computed } from '@vue/composition-api';
@@ -191,14 +185,16 @@ import { onSSR } from '@vue-storefront/core';
 import MobileStoreBanner from '~/components/MobileStoreBanner.vue';
 import LazyHydrate from 'vue-lazy-hydration';
 import gql from 'graphql-tag';
+import SsfwProductFunctions from '/ssfw-api/product';
 
 export default {
   name: 'Product',
+  mixins: [SsfwProductFunctions],
   transition: 'fade',
   apollo: {
     product: {
       query: gql`
-        query getProductsDetail($uuid: Uuid){ 
+        query getProductsDetail($uuid: Uuid){
           product (uuid: $uuid) {
               uuid,
               name
@@ -343,6 +339,7 @@ export default {
   },
   data() {
     return {
+      product: [],
       stock: 5,
       properties: [
         {
