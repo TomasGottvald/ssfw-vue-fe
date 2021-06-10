@@ -90,8 +90,7 @@
         <LazyHydrate when-idle>
           <SfTabs :open-tab="1" class="product__tabs">
             <SfTab data-cy="product-tab_description" title="Description">
-              <div class="product__description">
-                  {{ product.description }}
+              <div v-html="product.description" class="product__description">
               </div>
               <SfProperty
                 v-for="(property, i) in SsfwProductParameters(product.categories, product.brand, product.parameters)"
