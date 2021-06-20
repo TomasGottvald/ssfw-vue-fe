@@ -12,6 +12,12 @@
         <div class="banner__order-number">
           <span>{{ $t('Order No.') }}</span>
           <strong>{{ order.number }}</strong>
+          <br><br>
+          <SfButton
+            @click="SsfwPrintData()"
+            class="feedback-button color-secondary sf-button--full-width button-size"
+            >{{ $t('Print data to console') }}</SfButton
+          >
         </div>
       </template>
     </SfCallToAction>
@@ -75,12 +81,15 @@
 
 <script>
 import { SfHeading, SfButton, SfCallToAction } from '@storefront-ui/vue';
+import SsfwOrderFunctions from '/ssfw-api/order';
+
 export default {
   components: {
     SfHeading,
     SfButton,
     SfCallToAction
   },
+  mixins: [SsfwOrderFunctions],
   setup(props, context) {
     return {
       address: {

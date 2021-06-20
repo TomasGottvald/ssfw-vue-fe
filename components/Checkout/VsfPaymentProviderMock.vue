@@ -64,6 +64,11 @@ export default {
     const selectPaymentMethod = paymentMethod => {
       selectedPaymentMethod.value = paymentMethod;
       context.emit('status', true);
+
+      if(process.browser){
+          localStorage.setItem('SsfwOrderPayment', "");
+          localStorage.setItem('SsfwOrderPayment', JSON.stringify(paymentMethod));
+      }
     };
 
     return {

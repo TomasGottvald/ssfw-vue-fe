@@ -14,14 +14,15 @@
       </div>
       <div class="form__radio-group">
           <SfRadio
-            v-for="method in shippingMethods"
-            :key="method.id"
+            v-for="method in transports"
+            :key="method.uuid"
             :label="method.name"
-            :value="method.id"
+            :value="method.uuid"
             :selected="selectedShippingMethod && selectedShippingMethod.shippingMethod && selectedShippingMethod.shippingMethod.id"
-            @input="selectShippingMethod(method)"
+            @input="selectShippingMethod(method.uuid)"
+            @click="SsfwSaveShipping(method.uuid);"
             name="shippingMethod"
-            :description="method.localizedDescription"
+            :description="method.description"
             class="form__radio shipping"
           >
             <template #label="{ label }">
@@ -30,10 +31,10 @@
                 <div v-if="method && method.zoneRates">{{ $n(getShippingMethodPrice(method, totals.total), 'currency') }}</div>
               </div>
             </template>
-            <template #description="{ localizedDescription }">
+            <template #description="{ description }">
               <div class="sf-radio__description shipping__description">
                 <div class="shipping__info">
-                  {{ localizedDescription }}
+                  {{ description }}
                 </div>
               </div>
             </template>
@@ -63,9 +64,12 @@ import {
 import { ref, reactive, onMounted, computed } from '@vue/composition-api';
 import getShippingMethodPrice from '@/helpers/Checkout/getShippingMethodPrice';
 import { useVSFContext } from '@vue-storefront/core';
+import gql from 'graphql-tag';
+import SsfwOrderFunctions from '/ssfw-api/order';
 
 export default {
   name: 'VsfShippingProvider',
+  mixins: [SsfwOrderFunctions],
   components: {
     SfHeading,
     SfButton,
@@ -103,6 +107,40 @@ export default {
       default: ({ action, error }) => {}
     }
   },
+
+  apollo: {
+    transports: {
+      query: gql`
+        query loadedShippingMethods {
+          transports {
+            uuid
+            name
+            description
+            instruction
+            position
+            price {
+                priceWithVat
+                priceWithoutVat
+                vatAmount
+            }
+            images {
+                type
+                position
+                size
+                url
+                width
+                height
+            }
+            payments {
+                uuid
+                name
+            }
+          }
+        }
+      `
+    }
+  },
+
   setup (props) {
     const isShippingMethodStepCompleted = ref(false);
     const loading = ref(false);
@@ -126,8 +164,8 @@ export default {
     const loadMethods = async () => {
       try {
         error.loadMethods = null;
-        const shippingMethodsResponse = await $ct.api.getShippingMethods(cart.value.id);
-        return shippingMethodsResponse.data;
+        //const shippingMethodsResponse = await $ct.api.getShippingMethods(cart.value.id);
+        return true;
       } catch (err) {
         error.loadMethods = err;
         await props.onError({
@@ -141,8 +179,13 @@ export default {
       if (loadingShippingProvider.value.save) {
         return;
       }
-      const interceptedShippingMethod = await props.beforeSelect(shippingMethod);
-      await save({ shippingMethod: interceptedShippingMethod });
+            
+      if(process.browser){
+          localStorage.setItem('SsfwOrderShipping', "");
+          localStorage.setItem('SsfwOrderShipping', JSON.stringify(shippingMethod));
+      }
+      //const interceptedShippingMethod = await props.beforeSelect(shippingMethod);
+      //await save({ shippingMethod: interceptedShippingMethod });
       if (errorShippingProvider.value.save) {
         isShippingMethodStepCompleted.value = false;
         await props.onError({

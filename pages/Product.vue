@@ -83,7 +83,7 @@
             :disabled="loading"
             :canAddToCart="stock > 0"
             class="product__add-to-cart"
-            @click="addItem({ product, quantity: parseInt(qty) })"
+            @click="SsfwAddItem({ product, quantity: parseInt(qty) })"
           />
         </div>
 
@@ -195,7 +195,7 @@ export default {
       query: gql`
         query getProductsDetail($uuid: Uuid){
           product (uuid: $uuid) {
-              uuid,
+              uuid
               name
               shortDescription
               seoH1

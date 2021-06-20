@@ -47,6 +47,10 @@ export default {
 
     const selectMethod = (method) => {
       selectedMethod.value = method;
+      if(process.browser){
+          localStorage.setItem('SsfwOrderPayment', "");
+          localStorage.setItem('SsfwOrderPayment', JSON.stringify(shippingDetails.value));
+      }
       emit('status');
     };
 

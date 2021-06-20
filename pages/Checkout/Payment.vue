@@ -5,45 +5,6 @@
       :title="$t('Payment')"
       class="sf-heading--left sf-heading--no-underline title"
     />
-    <SfAccordion :open="$t('Shipping address')" class="accordion smartphone-only">
-      <SfAccordionItem :header="$t('Shipping address')">
-        <div class="accordion__item">
-          <div class="accordion__content">
-            <p class="content">
-              <span class="content__label" v-if="chosenShippingMethod">{{ chosenShippingMethod.name }}</span><br />
-              {{ shippingDetails.streetName }} {{ shippingDetails.apartment }},
-              {{ shippingDetails.zipCode }}<br />
-              {{ shippingDetails.city }}, {{ shippingDetails.country }}
-            </p>
-            <p class="content">{{ shippingDetails.phoneNumber }}</p>
-          </div>
-          <SfButton class="sf-button--text accordion__edit" @click="$emit('click:edit', 1)">
-            {{ $t('Edit') }}
-          </SfButton>
-        </div>
-      </SfAccordionItem>
-      <SfAccordionItem :header="$t('Billing address')">
-        <div class="accordion__item">
-          <div class="accordion__content">
-            <p v-if="billingSameAsShipping" class="content">
-              {{ $t('Same as shipping address') }}
-            </p>
-            <template v-else>
-              <p class="content">
-                <span class="content__label">{{ chosenPaymentMethod.label }}</span><br />
-                {{ billingDetails.streetName }} {{ billingDetails.apartment }},
-                {{ billingDetails.zipCode }}<br />
-                {{ billingDetails.city }}, {{ billingDetails.country }}
-              </p>
-              <p class="content">{{ billingDetails.phoneNumber }}</p>
-            </template>
-          </div>
-          <SfButton class="sf-button--text accordion__edit" @click="$emit('click:edit', 2)">
-            {{ $t('Edit') }}
-          </SfButton>
-        </div>
-      </SfAccordionItem>
-    </SfAccordion>
     <SfTable class="sf-table--bordered table desktop-only">
       <SfTableHeading class="table__row">
         <SfTableHeader class="table__header table__image">{{ $t('Item') }}</SfTableHeader>
@@ -183,7 +144,7 @@ export default {
 
     const processOrder = async () => {
       await make();
-      context.root.$router.push(`/checkout/thank-you?order=${order.value.id}`);
+      context.root.$router.push(`/checkout/thank-you?order=1235465`);
       setCart(null);
     };
     return {

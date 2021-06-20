@@ -8,24 +8,24 @@
     >
       <template #content-top>
         <SfProperty
-          v-if="totalItems"
+          v-if="SsfwGetCartCount()"
           class="sf-property--large cart-summary desktop-only"
           name="Total items"
-          :value="totalItems"
+          :value="SsfwGetCartCount()"
         />
       </template>
       <transition name="sf-fade" mode="out-in">
-        <div v-if="totalItems" key="my-cart" class="my-cart">
+        <div v-if="SsfwGetCartCount()" key="my-cart" class="my-cart">
           <div class="collected-product-list">
             <transition-group name="sf-fade" tag="div">
               <SfCollectedProduct
                 data-cy="collected-product-cart-sidebar"
-                v-for="product in products"
+                v-for="product in SsfwGetCartContentItems()"
                 :key="cartGetters.getItemSku(product)"
-                :image="cartGetters.getItemImage(product)"
-                :title="cartGetters.getItemName(product)"
-                :regular-price="$n(cartGetters.getItemPrice(product).regular, 'currency')"
-                :special-price="cartGetters.getItemPrice(product).special && $n(cartGetters.getItemPrice(product).special, 'currency')"
+                :image="SsfwGetProductImage(product)"
+                :title="SsfwGetProductName(product)"
+                :regular-price="139"
+                :special-price="145"
                 :stock="99999"
                 :qty="cartGetters.getItemQty(product)"
                 @input="updateItemQty({ product, quantity: $event })"
@@ -65,7 +65,7 @@
       </transition>
       <template #content-bottom>
         <transition name="sf-fade">
-          <div v-if="totalItems">
+          <div v-if="SsfwGetCartCount()">
             <SfProperty
               name="Total price"
               class="sf-property--full-width sf-property--large my-cart__total-price"
@@ -110,9 +110,11 @@ import { computed } from '@vue/composition-api';
 import { useCart, useUser, cartGetters } from '@vue-storefront/commercetools';
 import { useUiState } from '~/composables';
 import { onSSR } from '@vue-storefront/core';
+import SsfwProductFunctions from '/ssfw-api/product';
 
 export default {
   name: 'Cart',
+  mixins: [SsfwProductFunctions],
   components: {
     SfSidebar,
     SfButton,
@@ -127,24 +129,19 @@ export default {
     const { isCartSidebarOpen, toggleCartSidebar } = useUiState();
     const { cart, removeItem, updateItemQty, load: loadCart } = useCart();
     const { isAuthenticated } = useUser();
-    const products = computed(() => cartGetters.getItems(cart.value));
     const totals = computed(() => cartGetters.getTotals(cart.value));
-    const totalItems = computed(() => cartGetters.getTotalItems(cart.value));
-
     onSSR(async () => {
       await loadCart();
     });
 
     return {
       isAuthenticated,
-      products,
       removeItem,
       updateItemQty,
       isCartSidebarOpen,
       toggleCartSidebar,
       totals,
-      totalItems,
-      cartGetters
+      cartGetters,
     };
   }
 };

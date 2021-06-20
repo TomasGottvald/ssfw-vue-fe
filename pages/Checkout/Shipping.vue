@@ -229,6 +229,7 @@ import { required, min, digits } from 'vee-validate/dist/rules';
 import { useVSFContext } from '@vue-storefront/core';
 import { ref, watch, computed, onMounted } from '@vue/composition-api';
 import { onSSR } from '@vue-storefront/core';
+import SsfwOrderFunctions from '/ssfw-api/order';
 
 const NOT_SELECTED_ADDRESS = '';
 
@@ -247,6 +248,7 @@ extend('digits', {
 
 export default {
   name: 'Shipping',
+  mixins: [SsfwOrderFunctions],
   components: {
     SfHeading,
     SfInput,
@@ -319,6 +321,12 @@ export default {
         ...shippingDetails.value,
         [field]: value
       };
+      
+      if(process.browser){
+          localStorage.setItem('SsfwOrderAddress', "");
+          localStorage.setItem('SsfwOrderAddress', JSON.stringify(shippingDetails.value));
+      }
+      
       isShippingDetailsStepCompleted.value = false;
       currentAddressId.value = NOT_SELECTED_ADDRESS;
     };

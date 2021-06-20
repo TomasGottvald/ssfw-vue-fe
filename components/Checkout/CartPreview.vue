@@ -10,12 +10,12 @@
     <div class="highlighted">
       <SfProperty
         :name="$t('Products')"
-        :value="totalItems"
+        :value="SsfwGetCartCount()"
         class="sf-property--full-width sf-property--large property"
       />
       <SfProperty
         :name="$t('Subtotal')"
-        :value="$n(totals.subtotal, 'currency')"
+        :value="SsfwGetCartCount()"
         :class="['sf-property--full-width', 'sf-property--large property', { discounted: hasSpecialPrice }]"
       />
       <SfProperty
@@ -38,7 +38,7 @@
       />
       <SfProperty
         :name="$t('Total')"
-        :value="$n(totals.total, 'currency')"
+        :value="$n('100', 'currency')"
         class="sf-property--full-width sf-property--large property-total"
       />
     </div>
@@ -78,9 +78,11 @@ import {
 import { computed, ref } from '@vue/composition-api';
 import { useCart, useShippingProvider, cartGetters } from '@vue-storefront/commercetools';
 import getShippingMethodPrice from '@/helpers/Checkout/getShippingMethodPrice';
+import SsfwProductFunctions from '/ssfw-api/product';
 
 export default {
   name: 'CartPreview',
+  mixins: [SsfwProductFunctions],
   components: {
     SfHeading,
     SfButton,
@@ -100,7 +102,6 @@ export default {
 
     const products = computed(() => cartGetters.getItems(cart.value));
     const totalItems = computed(() => cartGetters.getTotalItems(cart.value));
-    const totals = computed(() => cartGetters.getTotals(cart.value));
     const discounts = computed(() => cartGetters.getDiscounts(cart.value));
 
     return {
@@ -108,7 +109,6 @@ export default {
       totalItems,
       listIsHidden,
       products,
-      totals,
       promoCode,
       showPromoCode,
       removeItem,
@@ -135,7 +135,7 @@ export default {
       ],
 
       selectedShippingMethod: computed(() => state.value && state.value.response && state.value.response.shippingMethod),
-      hasSpecialPrice: computed(() => totals.value.special > 0 && totals.value.special < totals.value.subtotal),
+      hasSpecialPrice: false,
       getShippingMethodPrice
     };
   }

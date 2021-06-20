@@ -237,6 +237,7 @@ import { required, min, digits } from 'vee-validate/dist/rules';
 import { useVSFContext } from '@vue-storefront/core';
 import { ref, watch, computed, onMounted } from '@vue/composition-api';
 import { onSSR } from '@vue-storefront/core';
+import SsfwOrderFunctions from '/ssfw-api/order';
 
 const NOT_SELECTED_ADDRESS = '';
 
@@ -255,6 +256,7 @@ extend('digits', {
 
 export default {
   name: 'Billing',
+  mixins: [SsfwOrderFunctions],
   components: {
     SfHeading,
     SfInput,
@@ -343,6 +345,10 @@ export default {
         ...billingDetails.value,
         [field]: value
       };
+      if(process.browser){
+          localStorage.setItem('SsfwOrderBilling', "");
+          localStorage.setItem('SsfwOrderBilling', JSON.stringify(billingDetails.value));
+      }
       currentAddressId.value = NOT_SELECTED_ADDRESS;
     };
 
