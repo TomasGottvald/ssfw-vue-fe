@@ -48,6 +48,12 @@ export default {
             }
         },
 
+        SsfwGetProductPrice(product) {
+            if(product.price){
+                return product.price.priceWithVat;
+            }
+        },
+
         SsfwAddItem(product, qty) {
             const addCartItem = { 
                 productUuid: product.uuid,
@@ -71,14 +77,22 @@ export default {
         SsfwGetCartContentItems() {
             if(process.browser){
                 const cartContent = JSON.parse(localStorage.getItem("SsfwCartContent"));
-                console.log(cartContent.item);
                 return cartContent.item;
             }
         },
 
         SsfwGetCartCount() {
             if(process.browser){
-                return localStorage.getItem("SsfwCartContent").length;
+                const cartContent = JSON.parse(localStorage.getItem("SsfwCartContent"));
+                if(cartContent){
+                    let itemsInCart = 0;
+                    for (var i=0;i<cartContent.quantity;i++){
+                        itemsInCart = itemsInCart + cartContent.quantity;
+                    };
+                    return itemsInCart;
+                } else {
+                    return 0;
+                }
             }
         },
         SsfwGetProductAltFromUrlImages(url) {
